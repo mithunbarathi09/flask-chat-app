@@ -66,9 +66,9 @@
       <script type="text/javascript">
         var socketio = io();
         var currentUser = null; // Variable to store the current user
-      
+
         const messages = document.getElementById("messages");
-      
+
         const createMessage = (name, msg) => {
           let usernameColor = stringToColor(name);
           const options = {
@@ -79,14 +79,16 @@
             minute: "2-digit",
             hour12: true,
           };
-      
+
           const content = `
             <div class="text mb-2 px-5 py-1">
               <div class="">
                 <div id="msg_title" class="mb-1">
                   <span id="username" class="font-semibold text-lg hover:underline cursor-pointer" style="color:${usernameColor};">${name}</span>
                   <span class="text-gray-400 ml-1 text-[12px] font-normal">
-                    ${new Date().toLocaleString("en-US", options).replace(",", "")}
+                    ${new Date()
+                      .toLocaleString("en-US", options)
+                      .replace(",", "")}
                   </span>
                 </div>
                 <div class="text-gray-800 font-medium">
@@ -95,10 +97,10 @@
               </div>
             </div>
           `;
-      
+
           messages.innerHTML += content;
         };
-      
+
         socketio.on("message", (data) => {
           if (currentUser === data.name) {
             // Same user sent another message, update only the message content
@@ -111,7 +113,7 @@
             createMessage(data.name, data.message);
           }
         });
-      
+
         const sendMessage = () => {
           const message = document.getElementById("message");
           if (message.value == "") return;
@@ -121,16 +123,13 @@
           });
           message.value = "";
         };
-      
+
         // Loop through the initial messages and create message elements
-
       </script>
-
-
 
       {% for msg in messages %}
       <script type="text/javascript">
-          createMessage("{{msg.name}}", "{{msg.message}}");
+        createMessage("{{msg.name}}", "{{msg.message}}");
       </script>
       {% endfor %}
     </div>
