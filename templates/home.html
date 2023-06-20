@@ -1,20 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-<form method="post" class="buttons">
-    <h3>ENTER THE CHAT ROOM</h3>
-    <div>
-        <label>Name:</label>
-        <input type="text" placeholder="Pick A Name" name="name" value="{{name}}"/>
+<form method="post" class="">
+    <div id="page_container" class="flex flex-row gap-5 justify-between">
+        <div id="left_banner" class="hidden sm:block w-2/5 h-screen bg-slate-600">
+        </div>
+        <div id="right_info" class="w-full sm:w-3/5 h-screen flex justify-center flex-col p-5">
+            <section id="enter_screen">
+                <h2 class="font-bold text-3xl my-5">Join room</h2>
+                <div class=" mb-3 ">
+                    {% if error and error == "Please Enter Name" %}
+                        <label for="name" class="mb-2 text-red-500 text-md">Name</label>
+                        <input id="name" type="text" placeholder="Pick a name" name="name" value="{{name}}" class="text-slate-500 border-solid border-2 border-red-500 p-4 w-full rounded-xl  focus:text-slate-950 focus:outline-none focus:border-blue-500 transition"/>
+                        <p class="text-red-500 text-sm mt-1">Please enter your name</p>
+                    {% else %}
+                        <labe for="name" class="mb-2 text-gray-500 text-md">Name</label>
+                        <input id="name" type="text" placeholder="Pick A Name" name="name" value="{{name}}" class="text-slate-500 border-solid border-2 border-slate-400 p-4 w-full rounded-xl focus:text-slate-950 focus:outline-none focus:border-blue-500 transition"/>
+                    {% endif %}
+                </div>
+                
+                <div class="flex flex-col justify-evenly  mb-6 mt-1">
+                    {% if error and error == "Room doesn't exist" %}
+                    <label for="room_code" class="text-red-500 text-md">Room Code</label>
+                    <input id="room_code" type="text" name="code" placeholder="Enter the room code" value="{{code}}" class="text-slate-500 border-2 border-solid border-red-400 p-4 w-full rounded-xl focus:text-slate-950 focus:outline-none focus:border-blue-500 transition"/>
+                    <p class="text-red-500 text-sm mt-1">This Room doesn't exist</p>
+                    {% else %}
+                    <label for="room_code" class="text-gray-500 text-md">Room Code</label>
+                    <input id="room_code" type="text" name="code" placeholder="Enter the room code" value="{{code}}" class="text-slate-500 border-2 border-solid border-slate-400 p-4 w-full rounded-xl focus:text-slate-950 focus:outline-none focus:border-blue-500 transition"/>
+                    {% endif %}
+                </div>
+
+                <button type="submit" name="join" class="w-full bg-blue-400 border-none rounded-xl p-4 mb-5 text-white cursor-pointer shadow-md scale-100 shadow-blue-300/50 hover:shadow-blue-300/50 hover:shadow-xl active:shadow-sm transition duration-150 ease-in-out hover:transition-all active:transition active:scale-95">Join</button>
+
+                <button type="submit" name="create" class="w-full bg-gray-300 border-none rounded-xl p-4 text-white  cursor-pointer shadow-sm scale-100 hover:shadow-md active:shadow-none transition duration-150 ease-in-out hover:transition-all active:transition active:scale-95">Create one</button>
+            </section>
+
+        </div>
     </div>
-    <div class="join">
-        <input type="text" name="code" placeholder="Room Code" value="{{code}}"/>
-        <button type="submit" name="join">Join the Room</button>
-    </div>
-    <button type="submit" name="create" class="create">Create A Room</button>
-    {% if error %}
-    <ul>
-        <li>{{error}}</li>
-    </ul>
-    {% endif %}
 </form>
 {% endblock %}
