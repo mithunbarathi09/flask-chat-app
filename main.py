@@ -8,6 +8,8 @@ app.config["SECRET_KEY"] = "Mitchat09"
 socketio = SocketIO(app)
 
 rooms = {}
+
+
 def generate_unique_code(length):
     while True:
         code = ""
@@ -17,6 +19,8 @@ def generate_unique_code(length):
             break
 
     return code
+
+
 @app.route("/", methods=["POST", "GET"])
 def home():
     session.clear()
@@ -38,13 +42,14 @@ def home():
             rooms[room] = {"members": 0, 'messages': []}
 
         elif code not in rooms:
-            return render_template("home.html", error="Room doesnt exists", code=code, name=name)
+            return render_template("home.html", error="Room doesn't exist", code=code, name=name)
 
         session["room"] = room
         session["name"] = name
         return redirect(url_for("room"))
 
     return render_template("home.html")
+
 
 @app.route("/room")
 def room():
@@ -60,13 +65,26 @@ def message(data):
     room = session.get("room")
     if room not in rooms:
         return
+    
+    name = session.get("name")
+    message_content = data["data"]
     content = {
-        "name": session.get("name"),
-        "message": data["data"]
+        "name": name,
+        "message": message_content
     }
     send(content, to=room)
-    rooms[room]["messages"].append(content)
-    print(f"{session.get('name')} said: {data['data']}")
+    
+    # Check if the user has sent previous messages
+    if room in rooms and name in rooms[room]["members"]:
+        # Same user sent another message, update only the message content
+        rooms[room]["messages"].append({"name": name, "message": message_content})
+    else:
+        # Different user or first message from the same user
+        rooms[room]["members"].add(name)
+        rooms[room]["messages"].append(content)
+    
+    print(f"{name} said: {message_content}")
+
 
 @socketio.on("connect")
 def connect(auth):
@@ -99,4 +117,5 @@ def disconnect():
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
+    extra_files = ['templates/home.html', 'templates/room.html', 'templates/base.html']
+    socketio.run(app, debug=True, port=5001, extra_files=extra_files, allow_unsafe_werkzeug=True, host='0.0.0.0')

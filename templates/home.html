@@ -1,20 +1,83 @@
-{% extends 'base.html' %}
-{% block content %}
-<form method="post" class="buttons">
-    <h3>ENTER THE CHAT ROOM</h3>
-    <div>
-        <label>Name:</label>
-        <input type="text" placeholder="Pick A Name" name="name" value="{{name}}"/>
+{% extends 'base.html' %} {% block content %}
+<form method="post" class="">
+  <div id="page_container" class="flex flex-row justify-between gap-5">
+    <div
+      id="left_banner"
+      class="hidden h-screen w-2/5 bg-slate-600 sm:block"
+    ></div>
+    <div
+      id="right_info"
+      class="flex h-screen w-full flex-col justify-center p-5 sm:w-3/5"
+    >
+      <section id="enter_screen">
+        <h2 class="my-5 text-3xl font-bold">Join room</h2>
+        <div class="mb-3">
+          {% if error and error == "Please Enter Name" %}
+          <label for="name" class="text-md mb-2 text-red-500">Name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Pick a name"
+            name="name"
+            value="{{name}}"
+            class="w-full rounded-xl border-2 border-solid border-red-500 p-4 text-slate-500 transition focus:border-blue-500 focus:text-slate-950 focus:outline-none"
+          />
+          <p class="mt-1 text-sm text-red-500">Please enter your name</p>
+          {% else %}
+          <label for="name" class="text-md mb-2 text-gray-500">Name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Pick A Name"
+            name="name"
+            value="{{name}}"
+            class="w-full rounded-xl border-2 border-solid border-slate-400 p-4 text-slate-500 transition focus:border-blue-500 focus:text-slate-950 focus:outline-none"
+          />
+          {% endif %}
+        </div>
+
+        <div class="mb-6 mt-1 flex flex-col justify-evenly">
+          {% if error and error == "Room doesn't exist" %}
+          <label for="room_code" class="text-md text-red-500">Room Code</label>
+          <input
+            id="room_code"
+            type="text"
+            name="code"
+            placeholder="Enter the room code"
+            value="{{code}}"
+            class="w-full rounded-xl border-2 border-solid border-red-400 p-4 text-slate-500 transition focus:border-blue-500 focus:text-slate-950 focus:outline-none"
+          />
+          <p class="mt-1 text-sm text-red-500">This Room doesn't exist</p>
+          {% else %}
+          <label for="room_code" class="text-md text-gray-500">Room Code</label>
+          <input
+            id="room_code"
+            type="text"
+            name="code"
+            placeholder="Enter the room code"
+            value="{{code}}"
+            class="w-full rounded-xl border-2 border-solid border-slate-400 p-4 text-slate-500 transition focus:border-blue-500 focus:text-slate-950 focus:outline-none"
+          />
+          {% endif %}
+        </div>
+
+        <button
+          type="submit"
+          name="join"
+          class="mb-5 w-full scale-100 cursor-pointer rounded-xl border-none bg-blue-400 p-4 text-white shadow-md shadow-blue-300/50 transition duration-150 ease-in-out hover:shadow-xl hover:shadow-blue-300/50 hover:transition-all active:scale-95 active:shadow-sm active:transition"
+        >
+          Join
+        </button>
+
+        <button
+          type="submit"
+          name="create"
+          class="w-full scale-100 cursor-pointer rounded-xl border-none bg-gray-300 p-4 text-white shadow-sm transition duration-150 ease-in-out hover:shadow-md hover:transition-all active:scale-95 active:shadow-none active:transition"
+        >
+          Create one
+        </button>
+      </section>
     </div>
-    <div class="join">
-        <input type="text" name="code" placeholder="Room Code" value="{{code}}"/>
-        <button type="submit" name="join">Join the Room</button>
-    </div>
-    <button type="submit" name="create" class="create">Create A Room</button>
-    {% if error %}
-    <ul>
-        <li>{{error}}</li>
-    </ul>
-    {% endif %}
+  </div>
 </form>
 {% endblock %}

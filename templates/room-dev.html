@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Chat App</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+      integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+      crossorigin="anonymous"
+    ></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="content h-full min-w-full">
+      <!-------------------------------------------------------------------------------------------------------------------->
+
+
+      
+      <div id="page_container" class="flex h-screen justify-center">
+        <div class="message-box w-[800px]">
+          <div
+            class="fixed left-0 top-0 h-5 w-full bg-white"
+            aria-hidden="true"
+          ></div>
+          <section
+            id="chat_header"
+            class="fixed left-1/2 top-5 w-11/12 md:w-[800px] -translate-x-1/2 rounded-xl border border-solid border-gray-400 bg-gray-800/20 p-5 drop-shadow-md saturate-200 backdrop-blur-sm"
+          >
+            <h2 class="text-center text-xl font-medium">
+              Chat Room: <span class="text-xl font-bold">{{code}}</span>
+            </h2>
+          </section>
+      
+          <div class="messages mt-28 pb-28" id="messages"></div>
+      
+          <div class="fixed bottom-6 flex w-full md:w-[800px] flex-row gap-3 p-3">
+            <input
+              type="text"
+              rows="3"
+              placeholder="Message"
+              name="messgae"
+              id="message"
+              class="w-full rounded-xl border-2 border-solid border-gray-400 p-3 pl-4 text-slate-500 drop-shadow-sm transition focus:border-blue-600 focus:text-slate-950 focus:outline-none"
+            />
+            <button
+              type="button"
+              name="send"
+              id="send_btn"
+              onclick="sendMessage()"
+              class="w-24 md:w-28 sm:w-36 scale-100 rounded-xl bg-blue-400 p-3 text-white shadow-blue-300/50 transition duration-150 ease-in-out hover:opacity-90 hover:shadow-blue-300/50 hover:drop-shadow-lg hover:transition-all active:scale-95 active:drop-shadow-sm active:transition"
+            >
+              Send
+            </button>
+          </div>
+          <div
+            class="fixed bottom-0 left-0 h-9 w-full bg-white"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </div>
+      
+      <script src="/static/js/room.js"></script>
+      <script type="text/javascript">
+        var socketio = io();
+        var currentUser = null; // Variable to store the current user
+      
+        const messages = document.getElementById("messages");
+      
+        const createMessage = (name, msg) => {
+          let usernameColor = stringToColor(name);
+          const options = {
+            month: "2-digit",
+            day: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          };
+      
+          const content = `
+              <div class="text mb-2 px-5 py-1">
+                <div class="">
+                  <div id="msg_title" class="mb-1">
+                    <span id="username" class="font-semibold text-lg hover:underline cursor-pointer" style="color:${usernameColor};">${name}</span>
+                    <span class="text-gray-400 ml-1 text-[12px] font-normal">
+                      ${new Date().toLocaleString("en-US", options).replace(",", "")}
+                    </span>
+                  </div>
+                  <div class="text-gray-800 font-medium">
+                    ${msg}
+                  </div>
+                </div>
+              </div>
+            `;
+      
+          messages.innerHTML += content;
+        };
+      
+        socketio.on("message", (data) => {
+          if (currentUser === data.name) {
+            // Same user sent another message, update only the message content
+            const lastMessage = messages.lastElementChild;
+            const messageContent = lastMessage.querySelector(".text-gray-800");
+            messageContent.innerHTML += "<br>" + data.message;
+          } else {
+            // Different user or first message from the same user
+            currentUser = data.name;
+            createMessage(data.name, data.message);
+          }
+        });
+      
+        const sendMessage = () => {
+          const message = document.getElementById("message");
+          if (message.value == "") return;
+          socketio.emit("message", {
+            name: currentUser,
+            data: message.value,
+          });
+          message.value = "";
+        };
+      
+        // Loop through the initial messages and create message elements
+      </script>
+      <!--------------------------------------------------------------------------->
+
+      {% for msg in messages %}
+      <script type="text/javascript">
+        createMessage("Evan", "Hello");
+        createMessage("Ruby", "Hi");
+        createMessage("Evan", "How are you?");
+        createMessage("Ruby", "I'm fine, thanks");
+      </script>
+      {% endfor %}
+    </div>
+  </body>
+</html>
