@@ -118,4 +118,4 @@ def disconnect():
 
 if __name__ == "__main__":
     extra_files = ['templates/home.html', 'templates/room.html', 'templates/base.html']
-    socketio.run(app, debug=True, port=5001, extra_files=extra_files)
+    socketio.run(app, debug=True, port=5001, extra_files=extra_files, allow_unsafe_werkzeug=True, host='0.0.0.0')

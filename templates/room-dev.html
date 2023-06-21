@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Chat App</title>
     <link rel="stylesheet" href="/static/css/style.css" />
     <script
@@ -19,6 +20,9 @@
   <body>
     <div class="content h-full min-w-full">
       <!-------------------------------------------------------------------------------------------------------------------->
+
+
+      
       <div id="page_container" class="flex h-screen justify-center">
         <div class="message-box w-[800px]">
           <div
@@ -27,16 +31,16 @@
           ></div>
           <section
             id="chat_header"
-            class="fixed left-1/2 top-5 w-[800px] -translate-x-1/2 rounded-xl border border-solid border-gray-400 bg-gray-800/20 p-5 drop-shadow-md saturate-200 backdrop-blur-sm"
+            class="fixed left-1/2 top-5 w-11/12 md:w-[800px] -translate-x-1/2 rounded-xl border border-solid border-gray-400 bg-gray-800/20 p-5 drop-shadow-md saturate-200 backdrop-blur-sm"
           >
             <h2 class="text-center text-xl font-medium">
-              Chat Room: <span class="text-xl font-bold">RBSJ</span>
+              Chat Room: <span class="text-xl font-bold">{{code}}</span>
             </h2>
           </section>
-
+      
           <div class="messages mt-28 pb-28" id="messages"></div>
-
-          <div class="fixed bottom-6 flex w-[800px] flex-row gap-3 p-3">
+      
+          <div class="fixed bottom-6 flex w-full md:w-[800px] flex-row gap-3 p-3">
             <input
               type="text"
               rows="3"
@@ -50,7 +54,7 @@
               name="send"
               id="send_btn"
               onclick="sendMessage()"
-              class="w-36 scale-100 rounded-xl bg-blue-400 p-3 text-white shadow-blue-300/50 transition duration-150 ease-in-out hover:opacity-90 hover:shadow-blue-300/50 hover:drop-shadow-lg hover:transition-all active:scale-95 active:drop-shadow-sm active:transition"
+              class="w-24 md:w-28 sm:w-36 scale-100 rounded-xl bg-blue-400 p-3 text-white shadow-blue-300/50 transition duration-150 ease-in-out hover:opacity-90 hover:shadow-blue-300/50 hover:drop-shadow-lg hover:transition-all active:scale-95 active:drop-shadow-sm active:transition"
             >
               Send
             </button>
@@ -61,14 +65,14 @@
           ></div>
         </div>
       </div>
-
+      
       <script src="/static/js/room.js"></script>
       <script type="text/javascript">
         var socketio = io();
         var currentUser = null; // Variable to store the current user
-
+      
         const messages = document.getElementById("messages");
-
+      
         const createMessage = (name, msg) => {
           let usernameColor = stringToColor(name);
           const options = {
@@ -79,28 +83,26 @@
             minute: "2-digit",
             hour12: true,
           };
-
+      
           const content = `
-            <div class="text mb-2 px-5 py-1">
-              <div class="">
-                <div id="msg_title" class="mb-1">
-                  <span id="username" class="font-semibold text-lg hover:underline cursor-pointer" style="color:${usernameColor};">${name}</span>
-                  <span class="text-gray-400 ml-1 text-[12px] font-normal">
-                    ${new Date()
-                      .toLocaleString("en-US", options)
-                      .replace(",", "")}
-                  </span>
-                </div>
-                <div class="text-gray-800 font-medium">
-                  ${msg}
+              <div class="text mb-2 px-5 py-1">
+                <div class="">
+                  <div id="msg_title" class="mb-1">
+                    <span id="username" class="font-semibold text-lg hover:underline cursor-pointer" style="color:${usernameColor};">${name}</span>
+                    <span class="text-gray-400 ml-1 text-[12px] font-normal">
+                      ${new Date().toLocaleString("en-US", options).replace(",", "")}
+                    </span>
+                  </div>
+                  <div class="text-gray-800 font-medium">
+                    ${msg}
+                  </div>
                 </div>
               </div>
-            </div>
-          `;
-
+            `;
+      
           messages.innerHTML += content;
         };
-
+      
         socketio.on("message", (data) => {
           if (currentUser === data.name) {
             // Same user sent another message, update only the message content
@@ -113,23 +115,27 @@
             createMessage(data.name, data.message);
           }
         });
-
+      
         const sendMessage = () => {
           const message = document.getElementById("message");
           if (message.value == "") return;
           socketio.emit("message", {
             name: currentUser,
-            message: message.value,
+            data: message.value,
           });
           message.value = "";
         };
-
+      
         // Loop through the initial messages and create message elements
       </script>
+      <!--------------------------------------------------------------------------->
 
       {% for msg in messages %}
       <script type="text/javascript">
-        createMessage("{{msg.name}}", "{{msg.message}}");
+        createMessage("Evan", "Hello");
+        createMessage("Ruby", "Hi");
+        createMessage("Evan", "How are you?");
+        createMessage("Ruby", "I'm fine, thanks");
       </script>
       {% endfor %}
     </div>
